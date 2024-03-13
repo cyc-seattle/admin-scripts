@@ -11,7 +11,7 @@ function stripDomain(email: string): string {
     return email.replace(properties.domain, "");
 }
 
-function *runUsersReport() {
+function runUsersReport() {
     console.info("Starting Users Report");
     const aliases = [];
 
@@ -39,11 +39,22 @@ function *runUsersReport() {
                     source: alias,
                     destination: user.primaryEmail,
                 });
-            };
+            }
         }
     });
 
     return aliases;
+}
+
+function assertGroupSetting(group: GoogleAppsScript.AdminGroupsSettings.Schema.Groups, key: string, value: any) {
+    const obj = <any>group;
+    if (!(key in obj) || obj[key] != value) {
+        console.warn(Utilities.formatString("Group %s does not have value %s for %s. Setting it!", group.name, value, key));
+        obj[key] = value;
+        return true;
+    }
+
+    return false;
 }
 
 function runGroupsReport(): EmailAlias[] {
@@ -53,23 +64,71 @@ function runGroupsReport(): EmailAlias[] {
     report.withSheet("Groups", (sheet) => {
         sheet.clearContents();
         sheet.appendRow([
-            "Email",
             "Name",
-            "Description",
-            "Members Count"
+            "Email",
+            "Size",
+
+            "Allow external members",
+            "Collaborative Inbox",
+            "Can post as group",
+            "Archive messages",
+
+            "Discover Group",
+            "Join Group",
+            "View Messages",
+            "Post Messages",
+            "View Membership",
+            "Moderate Members",
+            "Moderate Content",
+            "Assist Content",
+            "Moderation Level",
+            "Spam Moderation",
+            "Reply To"
         ]);
         
         for(const group of directory.listGroups()) {
             console.log("Group", group.name);
 
             const groupSettings = AdminGroupsSettings.Groups.get(group.email);
-            console.log("Group Settings", groupSettings);
+
+            const assertions = [
+                assertGroupSetting(groupSettings, "whoCanDiscoverGroup", "ALL_IN_DOMAIN_CAN_DISCOVER"),
+                assertGroupSetting(groupSettings, "whoCanJoin", "INVITED_CAN_JOIN"),
+                assertGroupSetting(groupSettings, "whoCanViewGroup", "ALL_MEMBERS_CAN_VIEW"),
+                assertGroupSetting(groupSettings, "whoCanViewGroup", "ALL_MEMBERS_CAN_VIEW"),
+                assertGroupSetting(groupSettings, "whoCanViewMembership", "ALL_MEMBERS_CAN_VIEW"),
+                assertGroupSetting(groupSettings, "whoCanModerateMembers", "OWNERS_AND_MANAGERS"),
+            ];
+
+            if (assertions.some(Boolean)) {
+                console.log("Writing group", group.name);
+                AdminGroupsSettings.Groups.update(groupSettings, group.email);
+            }
 
             sheet.appendRow([
-                group.email,
                 group.name,
-                group.description,
-                group.directMembersCount,
+                group.email,
+                Number.parseInt(group.directMembersCount),
+
+                JSON.parse(groupSettings.allowExternalMembers),
+                JSON.parse(groupSettings.enableCollaborativeInbox),
+                JSON.parse(groupSettings.membersCanPostAsTheGroup),
+                JSON.parse(groupSettings.isArchived),
+
+                groupSettings.whoCanDiscoverGroup,
+                groupSettings.whoCanJoin,
+
+                groupSettings.whoCanViewGroup,
+                groupSettings.whoCanPostMessage,
+                groupSettings.whoCanViewMembership,
+
+                groupSettings.whoCanModerateMembers,
+                groupSettings.whoCanModerateContent,
+                groupSettings.whoCanAssistContent,
+
+                groupSettings.messageModerationLevel,
+                groupSettings.spamModerationLevel,
+                groupSettings.replyTo,
             ]);
 
             for (const alias of group.aliases ?? []) {
@@ -78,7 +137,7 @@ function runGroupsReport(): EmailAlias[] {
                     destination: group.email,
                 });
             }
-        };
+        }
     });
 
     return aliases;
@@ -95,8 +154,8 @@ function runEmailAliasesReport(aliases: EmailAlias[]) {
 
         for (const alias of aliases) {
             sheet.appendRow([
-                alias.source,
-                alias.destination,
+                stripDomain(alias.source),
+                stripDomain(alias.destination),
             ]);
         }
     });

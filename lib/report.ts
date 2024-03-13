@@ -29,7 +29,6 @@ namespace Project {
             const protection = sheet.protect();
             protection
                 .setDescription(`Updated by automated script at ${timestamp}`)
-                .removeEditors(protection.getEditors())
                 .setWarningOnly(true);
 
             console.log("Set sheet protection at", timestamp);

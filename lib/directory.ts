@@ -20,6 +20,7 @@ namespace Project {
             
                 const users = page.users;
                 if (!users) {
+                    console.warn("No users found");
                     return;
                 }
             
@@ -44,6 +45,7 @@ namespace Project {
 
                 const groups = page.groups;
                 if (!groups) {
+                    console.warn("No groups found");
                     return;
                 }
 
