@@ -1,4 +1,4 @@
-const properties = Project.readProperties();
+const properties = Project.getScriptProperties();
 const directory = new Project.Directory(properties.domain);
 const report = new Project.Report(properties.directoryReportId);
 
@@ -144,7 +144,7 @@ function runGroupsReport(): EmailAlias[] {
 }
 
 function runEmailAliasesReport(aliases: EmailAlias[]) {
-    const properties = Project.readProperties();
+    const properties = Project.getScriptProperties();
     const directory = new Project.Directory(properties.domain);
     const report = new Project.Report(properties.directoryReportId);
 

@@ -60,7 +60,7 @@ namespace Project {
 }
 
 function listUsers() {
-    const properties = Project.readProperties();
+    const properties = Project.getScriptProperties();
     const directory = new Project.Directory(properties.domain);
     for(const user of directory.listUsers()) {
         console.log("User", user);
@@ -68,7 +68,7 @@ function listUsers() {
 }
 
 function listGroups() {
-    const properties = Project.readProperties();
+    const properties = Project.getScriptProperties();
     const directory = new Project.Directory(properties.domain);
     for(const group of directory.listGroups()) {
         console.log("Group", group);
