@@ -1,4 +1,5 @@
 namespace Project {
+    // These properties that are stored on the script. They are not sensitive, so it is okay if any user can read them.
     interface ScriptProperties {
         domain: string;
         directoryReportId: string;
@@ -10,6 +11,7 @@ namespace Project {
         clubId: string;
     }
 
+    // Since these properties are sensitive, they are stored on the user object.
     interface UserProperties {
         clubspot: ClubspotProperties;
     }
@@ -53,9 +55,4 @@ namespace Project {
             user: getUserProperties(),
         }
     }
-}
-
-function printProperties() {
-    const properties = Project.getProperties();
-    console.log("Project Properties", properties);
 }

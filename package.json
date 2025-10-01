@@ -1,5 +1,45 @@
 {
+  "name": "cyc-admin-scripts",
+  "version": "0.0.1",
+  "description": "A collection of automated scripts for managing CYC of Seattle.",
+  "type": "module",
+  "engines": {
+    "node": ">= 20.8 < 21"
+  },
+  "author": "Jason Walker <ungood@users.noreply.github.com>",
+  "license": "Apache-2.0",
+  "scripts": {
+    "clean": "rimraf coverage build tmp",
+    "prebuild": "true",
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -w -p tsconfig.json",
+    "lint": "eslint .",
+    "test": "vitest run unit",
+    "test:coverage": "vitest run unit --coverage.enabled --coverage.all",
+    "prettier": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --write",
+    "prettier:check": "prettier \"{src,__{tests}__}/**/*.{ts,mts}\" --config .prettierrc --check",
+    "test:watch": "vitest unit"
+  },
   "dependencies": {
     "@types/google-apps-script": "^1.0.82"
+  },
+  "devDependencies": {
+    "@google-cloud/functions-framework": "^3.4.5",
+    "@eslint/js": "~9.10",
+    "@types/eslint__js": "~8.42",
+    "@types/node": "~20",
+    "@typescript-eslint/parser": "~8.5",
+    "@vitest/coverage-v8": "~2.1",
+    "@vitest/eslint-plugin": "~1.1",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "~9.1",
+    "globals": "~15.9",
+    "prettier": "~3.3",
+    "rimraf": "~6.0",
+    "ts-api-utils": "~1.3",
+    "tsx": "^4.19.2",
+    "typescript": "~5.5",
+    "typescript-eslint": "~8.5",
+    "vitest": "~2.1"
   }
 }
