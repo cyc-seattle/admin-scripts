@@ -38,7 +38,6 @@
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
             nodejs_20
-            nodePackages."@google/clasp"
             config.treefmt.build.wrapper
             just
           ];
